@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turf X — Mumbai Edition | Hyper-Local Sports & Equipment Booking</title>
+  <meta name="description" content="Ultra-premium sports turf and pro equipment booking platform tailored exclusively for Mumbai, Maharashtra.">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- STICKY GLASS NAVBAR -->
+  <header class="site-navbar">
+    <div class="nav-brand-group">
+      <a href="/" class="brand-logo">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">TURF X</span>
+        <span class="brand-edition">MUMBAI</span>
+      </a>
+
+      <!-- Live Mumbai Weather / Monsoon Status Badge -->
+      <div class="weather-status-badge" style="cursor:pointer;" onclick="UniqueFeatures.openWeatherRadar()" title="Click for Live Monsoon & Pitch Advisory">
+        <span class="pulse-dot"></span>
+        <span id="navWeatherText">29°C | Clear Night • 82% Humidity</span>
+        <span style="font-size:0.65rem; background:rgba(204,255,0,0.15); color:var(--accent-volt); padding:1px 5px; border-radius:3px; margin-left:2px;">Radar</span>
+      </div>
+    </div>
+
+    <!-- Mode Switcher: "Book Turf + Gear" vs "Rent Gear Only" -->
+    <div class="mode-switcher">
+      <button class="mode-btn active" data-mode="TURF_AND_GEAR">
+        🏟️ Book Turf + Gear
+      </button>
+      <button class="mode-btn" data-mode="GEAR_ONLY">
+        ⚽ Rent Gear Only
+      </button>
+    </div>
+
+    <!-- Nav Actions: Database Explorer, Admin Panel, Wallet, User Auth -->
+    <div class="nav-actions">
+      <button class="user-wallet-btn" onclick="App.openDatabaseViewer()" style="border-color: rgba(204, 255, 0, 0.35); background: rgba(204, 255, 0, 0.08);">
+        <span>📊 DB Explorer</span>
+      </button>
+
+      <button id="navAdminDashboardBtn" class="btn-primary" style="display:none; padding:0.45rem 0.85rem; font-size:0.8rem;" onclick="AuthEngine.openAdminDashboard()">
+        🛡️ Admin Panel
+      </button>
+
+      <button class="user-wallet-btn" id="navWalletPill" onclick="App.openUserDrawer()">
+        <span>💳 Wallet</span>
+        <span class="wallet-badge" id="navWalletBalance">₹3,200</span>
+      </button>
+
+      <button class="user-wallet-btn" id="navUserAuthBtn" onclick="AuthEngine.openAuthModal('LOGIN_USER')">
+        <span>👤 Account</span>
+      </button>
+
+      <button class="close-drawer-btn" style="width:32px; height:32px; font-size:0.85rem;" title="Switch Account / Logout" onclick="AuthEngine.handleLogout()">
+        ⎋
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main>
+    <!-- HERO HEADER -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-title-group">
+          <h1>STADIUM LIGHTS <span class="hero-highlight">AFTER DARK</span>.</h1>
+          <p class="hero-subtitle">
+            Hyper-local, broadcast-grade sports turfs and turf-specific pro equipment rentals across Mumbai. From Bandra to Colaba, Powai to Navi Mumbai.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-box">
+            <div class="stat-num">8</div>
+            <div class="stat-label">Iconic Venues</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">40+</div>
+            <div class="stat-label">Pro Gear Stocked</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">3 AM</div>
+            <div class="stat-label">Night Owl Slots</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 1: TURF DISCOVERY VIEW -->
+    <div id="turfDiscoveryView">
+      <!-- MUMBAI ZONE & SPORT QUICK-FILTER BAR -->
+      <section class="filter-section">
+        <div class="filter-bar-header">
+          <div class="filter-label">
+            <span>🌆</span> Select Mumbai Region
+          </div>
+          <span style="font-size: 0.74rem; color: var(--text-muted);">Real-time local station distances</span>
+        </div>
+
+        <!-- Horizontal Scrollable Zone Pills -->
+        <div class="zone-pill-scroller">
+          <button class="zone-pill active" data-zone="All Mumbai">All Mumbai</button>
+          <button class="zone-pill" data-zone="South Mumbai (Colaba-Worli)">South Mumbai (Colaba-Worli)</button>
+          <button class="zone-pill" data-zone="Bandra & Khar">Bandra & Khar</button>
+          <button class="zone-pill" data-zone="Andheri & Juhu">Andheri & Juhu</button>
+          <button class="zone-pill" data-zone="Goregaon-Borivali">Goregaon-Borivali</button>
+          <button class="zone-pill" data-zone="Central Suburbs & Powai">Central Suburbs & Powai</button>
+          <button class="zone-pill" data-zone="Thane & Navi Mumbai">Thane & Navi Mumbai</button>
+        </div>
+
+        <!-- Sub-filters: Sports & Search -->
+        <div class="subfilter-row">
+          <div class="sport-pills">
+            <button class="sport-pill active" data-sport="All Sports">All Sports</button>
+            <button class="sport-pill" data-sport="Football">⚽ Football</button>
+            <button class="sport-pill" data-sport="Box Cricket">🏏 Box Cricket</button>
+            <button class="sport-pill" data-sport="Pickleball">🏓 Pickleball</button>
+            <button class="sport-pill" data-sport="Badminton">🏸 Badminton</button>
+          </div>
+
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="turfSearchInput" class="search-input" placeholder="Search by turf name, train station, or area...">
+          </div>
+        </div>
+      </section>
+
+      <!-- INTERACTIVE TURF DISCOVERY CARDS GRID -->
+      <section class="turf-grid-container">
+        <div class="section-headline">
+          <h2>Available Mumbai Arenas</h2>
+          <span class="results-count" id="resultsCountText">Loading venues...</span>
+        </div>
+        <div class="turf-grid" id="turfCardsGrid">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW 2: STANDALONE EQUIPMENT RENTAL VIEW (Module B) -->
+    <section class="filter-section" id="standaloneGearView" style="display: none;">
+      <!-- Dynamically populated by equipment.js initStandaloneVenueView -->
+    </section>
+  </main>
+
+  <!-- SLIDE-OVER BOOKING & EQUIPMENT DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop">
+    <div class="slide-drawer" id="bookingDrawer">
+      <!-- Header -->
+      <div class="drawer-header">
+        <div class="drawer-header-info">
+          <h3 id="drawerTurfName">Select Slot & Gear</h3>
+          <div class="drawer-header-sub" id="drawerTurfMeta">Mumbai Venue</div>
+        </div>
+        <button class="close-drawer-btn" onclick="App.closeDrawer()">✕</button>
+      </div>
+
+      <!-- 7-Minute Concurrency Lock Countdown Bar -->
+      <div class="lock-countdown-bar" id="lockCountdownBar">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span>⚡</span>
+          <span><strong>Slot Locked Exclusively for You:</strong> Complete checkout within</span>
+        </div>
+        <div class="lock-timer-text" id="lockTimerSeconds">07:00</div>
+      </div>
+
+      <!-- Scrollable Drawer Body -->
+      <div class="drawer-body">
+        <!-- Date Selector -->
+        <div>
+          <div class="drawer-step-title">
+            <span>1. Select Date</span>
+            <span style="font-size: 0.72rem; color: var(--accent-volt);">Live Slots</span>
+          </div>
+          <div class="date-picker-pills" id="drawerDatePicker">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- 6 AM - 3 AM Time Slot Matrix -->
+        <div>
+          <div class="drawer-step-title">
+            <span>2. Select Hourly Slot (6:00 AM - 3:00 AM)</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted);">Dynamic Tiers</span>
+          </div>
+          <div id="slotMatrixContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Turf-Specific Equipment Inventory Section -->
+        <div>
+          <div class="drawer-step-title">
+            <span>3. Turf Equipment Stock (Specific to this Venue)</span>
+            <span style="font-size: 0.72rem; color: var(--accent-emerald);">Live In-Venue Stock</span>
+          </div>
+          <div class="equipment-section-wrapper">
+            <div class="equipment-items-list" id="drawerEquipmentList">
+              <!-- Dynamically populated by equipment.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drawer Footer Action -->
+      <div class="drawer-footer">
+        <div class="price-breakdown-row">
+          <span>Turf Hourly Fee:</span>
+          <span class="mono" id="breakdownTurfFee">₹0</span>
+        </div>
+        <div class="price-breakdown-row">
+          <span>Equipment Rental:</span>
+          <span class="mono" id="breakdownGearFee">₹0</span>
+        </div>
+        <div class="price-breakdown-row total-row">
+          <span>Grand Total:</span>
+          <span class="mono" style="color: var(--accent-volt);" id="breakdownTotalFee">₹0</span>
+        </div>
+        <button class="btn-primary btn-checkout-proceed" id="btnDrawerProceed" onclick="App.proceedToPaymentModal()" disabled style="opacity: 0.4;">
+          Select an Available Slot First
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5-TIER MULTI-MODE PAYMENT MODAL (Module C) -->
+  <div class="modal-backdrop" id="paymentModalBackdrop">
+    <div class="payment-modal">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div>
+          <h3 id="modalBookingTitle">Complete Payment</h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted);" id="modalBookingSubtitle">Turf Booking</div>
+        </div>
+        <div class="modal-total-pill" id="modalTotalAmount">₹0</div>
+      </div>
+
+      <!-- 5-Payment Modes Tabs Bar -->
+      <div class="payment-tabs-bar">
+        <button class="pay-tab-btn active" data-mode="UPI" onclick="PaymentsEngine.selectPaymentMode('UPI')">
+          <span class="pay-tab-icon">⚡</span>
+          <span>UPI Instant</span>
+        </button>
+        <button class="pay-tab-btn" data-mode="CARD" onclick="PaymentsEngine.selectPaymentMode('CARD')">
+          <span class="pay-tab-icon">💳</span>
+          <span>Card / NetBanking</span>
+        </button>
+        <button class="pay-tab-btn" data-mode="SPLIT" onclick="PaymentsEngine.selectPaymentMode('SPLIT')">
+          <span class="pay-tab-icon">👥</span>
+          <span>Split Squad</span>
+        </button>
+        <button class="pay-tab-btn" data-mode="PARTIAL" onclick="PaymentsEngine.selectPaymentMode('PARTIAL')">
+          <span class="pay-tab-icon">🏷️</span>
+          <span>Pay 30% Now</span>
+        </button>
+        <button class="pay-tab-btn" data-mode="WALLET" onclick="PaymentsEngine.selectPaymentMode('WALLET')">
+          <span class="pay-tab-icon">💰</span>
+          <span>Turf X Wallet</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="payment-tab-content">
+        <!-- TAB 1: UPI Pay (Authentic NPCI UPI QR) -->
+        <div class="tab-pane active" data-pane="UPI">
+          <div class="upi-pane-layout">
+            <div class="upi-qr-card">
+              <img id="upiQrRealImage" alt="Scan to Pay via UPI" style="width: 100%; aspect-ratio: 1; border-radius: 6px; display: block; border: 1px solid #E2E8F0;">
+              <canvas id="upiQrCanvas" style="display:none;"></canvas>
+              <div class="upi-scan-hint" style="color: #0F172A; font-weight: 800; margin-top: 6px;">
+                Scan with Any UPI App
+              </div>
+              <div style="font-size: 0.65rem; color: #64748B; font-weight: 600;">GPay • PhonePe • Paytm • BHIM • Cred</div>
+              <div class="mono" id="upiQrAmountText" style="font-size: 0.78rem; font-weight: 800; color: #047857; margin-top: 4px;"></div>
+            </div>
+
+            <div class="upi-input-group">
+              <!-- Real UPI Configuration -->
+              <div class="form-field" style="background: rgba(255, 255, 255, 0.03); padding: 0.75rem; border-radius: var(--radius-sm); border: var(--border-glass);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                  <label style="margin: 0; font-size: 0.72rem; color: var(--accent-volt); font-weight: 700;">Merchant / Payee UPI ID (Real):</label>
+                  <span id="upiIdDisplayBadge" class="mono" style="font-size: 0.72rem; color: #FFF; background: rgba(204, 255, 0, 0.15); padding: 1px 6px; border-radius: 4px;">turfx.mumbai@okaxis</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <input type="text" id="inputMerchantUpiId" class="text-input" style="font-size: 0.8rem; padding: 0.4rem 0.7rem;" placeholder="e.g. yourname@okaxis / 9820144520@paytm" value="turfx.mumbai@okaxis">
+                  <button type="button" class="btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; white-space: nowrap;" onclick="PaymentsEngine.updateCustomUpiId()">
+                    Set UPI
+                  </button>
+                </div>
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">
+                  💡 Enter your own real UPI ID above and click "Set UPI" to generate a live QR payable to your account!
+                </div>
+              </div>
+
+              <!-- Quick Action: Direct App Link for Mobile -->
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <a id="btnOpenUpiApp" href="#" class="btn-primary" style="flex: 1; padding: 0.55rem; font-size: 0.8rem; justify-content: center; text-decoration: none;">
+                  ⚡ Open in UPI App (Mobile)
+                </a>
+                <button type="button" class="btn-secondary" style="padding: 0.55rem 0.85rem; font-size: 0.8rem;" onclick="PaymentsEngine.copyUpiId()">
+                  📋 Copy UPI ID
+                </button>
+              </div>
+
+              <div class="upi-polling-status">
+                <span class="pulse-dot"></span>
+                <span>Live payment polling active. Instant verification upon scan.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Card Payment -->
+        <div class="tab-pane" data-pane="CARD">
+          <!-- Interactive 3D Card Preview -->
+          <div class="card-preview-interactive">
+            <div class="card-chip"></div>
+            <div class="card-number-display" id="cardDisplayNumber">•••• •••• •••• ••••</div>
+            <div class="card-meta-row">
+              <div>
+                <div style="font-size: 0.6rem; color: #94A3B8;">CARDHOLDER</div>
+                <div id="cardDisplayName" style="font-weight: 700;">ADITYA SHARMA</div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; color: #94A3B8;">EXPIRES</div>
+                <div id="cardDisplayExpiry" class="mono" style="font-weight: 700;">12/28</div>
+              </div>
+              <div>
+                <div style="font-size: 0.6rem; color: #94A3B8;">NETWORK</div>
+                <div id="cardDisplayBrand" style="font-weight: 800; color: var(--accent-volt);">VISA</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Form Inputs -->
+          <div class="card-input-grid">
+            <div class="form-field">
+              <label>16-Digit Card Number</label>
+              <input type="text" id="cardInputNumber" class="text-input mono" placeholder="4532 8920 1192 3847" value="4532 8920 1192 3847" oninput="PaymentsEngine.handleCardInput('number', this.value)">
+            </div>
+            <div class="form-field">
+              <label>Expiry (MM/YY)</label>
+              <input type="text" id="cardInputExpiry" class="text-input mono" placeholder="12/28" value="12/28" oninput="PaymentsEngine.handleCardInput('expiry', this.value)">
+            </div>
+            <div class="form-field">
+              <label>CVV</label>
+              <input type="password" id="cardInputCvv" class="text-input mono" maxlength="4" placeholder="892" value="892">
+            </div>
+          </div>
+
+          <!-- 3D Secure OTP Overlay -->
+          <div class="otp-secure-overlay" id="otpOverlay">
+            <h4 style="color: var(--accent-emerald);">3D-Secure Authentication</h4>
+            <p id="otpCardInfo" style="font-size: 0.8rem; color: var(--text-muted);"></p>
+            <div class="otp-input-boxes">
+              <input type="text" id="otpInputSingle" class="otp-digit" style="width: 160px; letter-spacing: 6px;" maxlength="6" placeholder="••••••">
+            </div>
+            <div id="otpAutoHint" style="font-size: 0.75rem; color: var(--accent-volt);"></div>
+            <button class="btn-primary" style="margin: 0 auto;" onclick="PaymentsEngine.verifyCardOtp()">
+              Verify OTP & Authorize Payment
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 3: Split-With-Squad -->
+        <div class="tab-pane" data-pane="SPLIT">
+          <div class="squad-slider-wrap">
+            <div class="squad-slider-header">
+              <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary);">Divide bill among squad members:</label>
+              <span class="mono" id="squadCountDisplay" style="color: var(--accent-volt); font-weight: 800;">5 Players</span>
+            </div>
+            <input type="range" id="squadSizeSlider" min="2" max="22" value="5" class="squad-slider" oninput="PaymentsEngine.updateSplitCalculator(this.value)">
+          </div>
+
+          <div class="split-stats-grid">
+            <div class="split-stat-box">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Per-Player Share</div>
+              <div class="split-stat-val" id="squadPerHeadDisplay">₹0</div>
+            </div>
+            <div class="split-stat-box">
+              <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Total Match Bill</div>
+              <div class="split-stat-val" id="squadTotalDisplay">₹0</div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; background: rgba(255,255,255,0.03); padding: 0.85rem; border-radius: var(--radius-sm); border: var(--border-glass);">
+            💬 <strong>Squad Multi-Pay:</strong> You pay your single share now to lock the slot. An automated WhatsApp payment link is generated instantly for the remaining teammates to pay their portion.
+          </div>
+        </div>
+
+        <!-- TAB 4: Partial Advance (30% Online / 70% at Venue) -->
+        <div class="tab-pane" data-pane="PARTIAL">
+          <div class="partial-breakdown-card">
+            <div class="partial-tier-row partial-now">
+              <div>
+                <strong style="color: var(--accent-volt);">1. Online Deposit (30% Advance)</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Locks turf slot and reserved equipment immediately</div>
+              </div>
+              <div class="mono" id="partialPayNowAmount" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-volt);">₹0</div>
+            </div>
+
+            <div class="partial-tier-row partial-later">
+              <div>
+                <strong>2. Balance Due at Venue (70%)</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Pay directly at turf counter via Cash / UPI / Card before kickoff</div>
+              </div>
+              <div class="mono" id="partialPayLaterAmount" style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary);">₹0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: Turf X Wallet & Pass Credits -->
+        <div class="tab-pane" data-pane="WALLET">
+          <div class="wallet-card-panel">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--accent-emerald); font-weight: 700;">Active Turf X Wallet</div>
+              <div class="wallet-balance-big" id="modalWalletBalanceText">₹3,200</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Pass Loyalty: <span id="modalWalletCoinsText" style="color: var(--accent-volt); font-weight: 700;">160 Coins</span> (+5% cashback on this booking)</div>
+            </div>
+            <button class="btn-secondary" onclick="PaymentsEngine.topUpWallet(1000, 100)">
+              + Top-up ₹1000
+            </button>
+          </div>
+
+          <div id="walletInsufficientNotice" style="display:none; color: var(--danger); font-size: 0.8rem; background: rgba(239, 68, 68, 0.1); padding: 0.6rem; border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.3);">
+          </div>
+
+          <div style="margin-top: 0.5rem;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase;">Quick Top-Up Bundles</div>
+            <div class="wallet-topup-grid">
+              <div class="topup-chip" onclick="PaymentsEngine.topUpWallet(500, 25)">
+                <div class="mono" style="font-weight: 700;">+₹500</div>
+                <div style="font-size: 0.65rem; color: var(--accent-emerald);">+₹25 Bonus</div>
+              </div>
+              <div class="topup-chip" onclick="PaymentsEngine.topUpWallet(1000, 100)">
+                <div class="mono" style="font-weight: 700;">+₹1,000</div>
+                <div style="font-size: 0.65rem; color: var(--accent-emerald);">+₹100 Bonus</div>
+              </div>
+              <div class="topup-chip" onclick="PaymentsEngine.topUpWallet(2000, 250)">
+                <div class="mono" style="font-weight: 700;">+₹2,000</div>
+                <div style="font-size: 0.65rem; color: var(--accent-emerald);">+₹250 Bonus</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Bottom Actions -->
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="PaymentsEngine.closeModal()">
+          Cancel
+        </button>
+        <button class="btn-primary" id="btnSubmitPayment" onclick="PaymentsEngine.submitPayment()">
+          Proceed with Payment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS RECEIPT MODAL -->
+  <div class="modal-backdrop" id="receiptModalBackdrop">
+    <div class="receipt-card">
+      <div class="success-icon-glow">✓</div>
+      <h2 style="font-size: 1.6rem; margin-bottom: 0.2rem;">Booking Confirmed!</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">Your Mumbai match session is locked and verified.</p>
+      
+      <div class="receipt-ref-code" id="receiptRef">TXM-0000</div>
+
+      <div class="receipt-details-list">
+        <div><strong>Turf:</strong> <span id="receiptTurfName">-</span></div>
+        <div><strong>Schedule:</strong> <span id="receiptDateTime">-</span></div>
+        <div><strong>Payment Mode:</strong> <span id="receiptPaymentMode">-</span></div>
+        <div><strong>Paid Online:</strong> <span class="mono" id="receiptAdvancePaid" style="color: var(--accent-emerald);">-</span></div>
+        <div><strong>Due at Turf Counter:</strong> <span class="mono" id="receiptDueVenue">-</span></div>
+        <div><strong>Equipment Reserved:</strong> <span id="receiptEquipmentSummary">-</span></div>
+      </div>
+
+      <!-- Squad Split WhatsApp Share Box -->
+      <div id="receiptSquadSplitDetails" style="display: none; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 1.25rem;">
+        <div style="font-size: 0.8rem; color: #25D366; font-weight: 700; margin-bottom: 0.35rem;" id="receiptSplitText"></div>
+        <a id="receiptSplitLink" target="_blank" class="btn-primary" style="background: #25D366; color: #000; text-decoration: none; width: 100%; justify-content: center;">
+          📲 Share Link via WhatsApp
+        </a>
+      </div>
+
+      <!-- Download Match Pass Action Buttons -->
+      <div style="display:flex; gap:0.5rem; margin-bottom:1rem;">
+        <button class="btn-primary" style="flex:1; justify-content:center; background:#10B981; color:#000;" onclick="UniqueFeatures.downloadMatchPass()">
+          🎟️ Download Stadium Match Pass (SVG/PDF)
+        </button>
+        <button class="btn-secondary" style="padding:0.6rem 0.85rem; font-size:0.8rem;" onclick="UniqueFeatures.openTacticalBoard(document.getElementById('receiptTurfName')?.textContent)">
+          ⚽ 3D Pitch Lineup
+        </button>
+      </div>
+
+      <button class="btn-primary" style="width: 100%;" onclick="PaymentsEngine.closeReceiptModal()">
+        Done & Back to Discover
+      </button>
+    </div>
+  </div>
+
+  <!-- USER BOOKINGS & WALLET MODAL -->
+  <div class="modal-backdrop" id="userBookingsModalBackdrop">
+    <div class="payment-modal" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3>My Mumbai Turf Bookings & Wallet</h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">Aditya Sharma • Mumbai Floodlight Pass</div>
+        </div>
+        <button class="close-drawer-btn" onclick="App.closeUserDrawer()">✕</button>
+      </div>
+
+      <div style="padding: 1.5rem; max-height: 500px; overflow-y: auto;">
+        <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; text-transform: uppercase; color: var(--text-secondary);">Recent Sessions</h4>
+        <div id="userBookingsList">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATABASE EXPLORER MODAL -->
+  <div class="modal-backdrop" id="dbViewerModalBackdrop">
+    <div class="payment-modal" style="max-width: 820px; max-height: 85vh;">
+      <div class="modal-header">
+        <div>
+          <h3 style="display:flex; align-items:center; gap:0.5rem;">
+            <span>📊</span> Turf X Database Explorer (Live SQLite)
+          </h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">
+            Connected to <code>data/turf_x.db</code> • Live records for Turfs, Equipment, and Bookings
+          </div>
+        </div>
+        <button class="close-drawer-btn" onclick="App.closeDatabaseViewer()">✕</button>
+      </div>
+
+      <div style="padding: 1.5rem; overflow-y: auto;" id="dbTablesContainer">
+        <div style="text-align:center; padding:2rem; color:var(--text-muted);">Loading database overview...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL: USER & ADMIN LOGIN / SIGNUP -->
+  <div class="modal-backdrop" id="authModalBackdrop">
+    <div class="payment-modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <h3>Turf X Mumbai Portal</h3>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Player & Arena Operations Access</div>
+        </div>
+        <button class="close-drawer-btn" onclick="AuthEngine.closeAuthModal()">✕</button>
+      </div>
+
+      <!-- Auth Tabs Bar -->
+      <div class="payment-tabs-bar">
+        <button class="pay-tab-btn auth-tab-btn active" data-tab="LOGIN_USER" onclick="AuthEngine.switchAuthTab('LOGIN_USER')">
+          <span>⚽ Player Login</span>
+        </button>
+        <button class="pay-tab-btn auth-tab-btn" data-tab="SIGNUP_USER" onclick="AuthEngine.switchAuthTab('SIGNUP_USER')">
+          <span>📝 Sign Up</span>
+        </button>
+        <button class="pay-tab-btn auth-tab-btn" data-tab="LOGIN_ADMIN" onclick="AuthEngine.switchAuthTab('LOGIN_ADMIN')">
+          <span>🛡️ Admin Portal</span>
+        </button>
+      </div>
+
+      <div class="payment-tab-content">
+        <!-- 1. Player Login Pane -->
+        <div class="tab-pane auth-pane active" data-pane="LOGIN_USER">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <span style="font-size:0.75rem; color:var(--text-muted);">Player Account</span>
+            <button class="btn-secondary" style="font-size:0.7rem; padding:2px 8px;" onclick="AuthEngine.fillDemo('USER')">
+              ⚡ Fill Test Player (Aditya)
+            </button>
+          </div>
+          <div class="form-field">
+            <label>Registered Email</label>
+            <input type="email" id="loginUserEmail" class="text-input" placeholder="e.g. aditya@mumbai.in" value="aditya@mumbai.in">
+          </div>
+          <div class="form-field">
+            <label>Password</label>
+            <input type="password" id="loginUserPassword" class="text-input" placeholder="••••••••" value="user123">
+          </div>
+          <button class="btn-primary" style="width:100%; justify-content:center; margin-top:0.5rem;" onclick="AuthEngine.handleLogin('USER')">
+            Login as Player ➔
+          </button>
+          <div style="text-align:center; font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
+            Don't have an account? <a href="javascript:void(0)" onclick="AuthEngine.switchAuthTab('SIGNUP_USER')" style="color:var(--accent-volt); font-weight:700;">Sign up here</a>
+          </div>
+        </div>
+
+        <!-- 2. Player Sign Up Pane -->
+        <div class="tab-pane auth-pane" data-pane="SIGNUP_USER">
+          <div class="form-field">
+            <label>Full Name</label>
+            <input type="text" id="signupName" class="text-input" placeholder="e.g. Rohit Sharma">
+          </div>
+          <div class="form-field">
+            <label>Email Address</label>
+            <input type="email" id="signupEmail" class="text-input" placeholder="e.g. rohit@mumbai.in">
+          </div>
+          <div class="form-field">
+            <label>Phone Number (WhatsApp for Squad splits)</label>
+            <input type="tel" id="signupPhone" class="text-input" placeholder="+91 98200 12345">
+          </div>
+          <div class="form-field">
+            <label>Create Password</label>
+            <input type="password" id="signupPassword" class="text-input" placeholder="At least 4 characters">
+          </div>
+          <div class="form-field">
+            <label>Account Role</label>
+            <select id="signupRole" class="text-input">
+              <option value="USER" selected>Player / Team Captain (Book Turfs & Gear)</option>
+              <option value="ADMIN">Turf Operations Manager / Admin</option>
+            </select>
+          </div>
+          <button class="btn-primary" style="width:100%; justify-content:center; margin-top:0.5rem;" onclick="AuthEngine.handleSignup()">
+            Create Free Account ➔
+          </button>
+        </div>
+
+        <!-- 3. Admin Portal Login Pane -->
+        <div class="tab-pane auth-pane" data-pane="LOGIN_ADMIN">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <span style="font-size:0.75rem; color:var(--accent-volt); font-weight:700;">Admin / Stadium Ops Login</span>
+            <button class="btn-secondary" style="font-size:0.7rem; padding:2px 8px; border-color:var(--accent-volt);" onclick="AuthEngine.fillDemo('ADMIN')">
+              🛡️ Fill Admin Credentials
+            </button>
+          </div>
+          <div class="form-field">
+            <label>Admin Email</label>
+            <input type="email" id="loginAdminEmail" class="text-input" placeholder="admin@turfx.mumbai" value="admin@turfx.mumbai">
+          </div>
+          <div class="form-field">
+            <label>Admin Password</label>
+            <input type="password" id="loginAdminPassword" class="text-input" placeholder="••••••••" value="admin123">
+          </div>
+          <button class="btn-primary" style="width:100%; justify-content:center; margin-top:0.5rem; background:var(--accent-volt);" onclick="AuthEngine.handleLogin('ADMIN')">
+            Access Operations Portal ➔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN OPERATIONS DASHBOARD MODAL -->
+  <div class="modal-backdrop" id="adminDashboardBackdrop">
+    <div class="payment-modal" style="max-width: 960px; max-height: 90vh;">
+      <div class="modal-header">
+        <div>
+          <h3 style="display:flex; align-items:center; gap:0.5rem;">
+            <span>🛡️</span> Turf X Operations & Revenue Dashboard
+          </h3>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">
+            Manage Live Mumbai Bookings, Turf Equipment Inventory & Venue Stats
+          </div>
+        </div>
+        <button class="close-drawer-btn" onclick="AuthEngine.closeAdminDashboard()">✕</button>
+      </div>
+
+      <div style="padding: 1.5rem; overflow-y: auto; display:flex; flex-direction:column; gap:1.75rem;">
+        <!-- Metrics Row -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem;">
+          <div class="stat-box" style="text-align:left; border-color:rgba(16,185,129,0.3);">
+            <div class="stat-num" id="adminStatRevenue" style="color:var(--accent-emerald);">₹0</div>
+            <div class="stat-label">Total Match Revenue</div>
+          </div>
+          <div class="stat-box" style="text-align:left; border-color:rgba(204,255,0,0.3);">
+            <div class="stat-num" id="adminStatBookings">0</div>
+            <div class="stat-label">Total Bookings</div>
+          </div>
+          <div class="stat-box" style="text-align:left;">
+            <div class="stat-num" id="adminStatTurfs">8</div>
+            <div class="stat-label">Active Mumbai Arenas</div>
+          </div>
+          <div class="stat-box" style="text-align:left;">
+            <div class="stat-num" id="adminStatEquipment">40</div>
+            <div class="stat-label">Pro Gear Stocked</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Live Bookings -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <h4 style="font-size:1.05rem; color:var(--text-primary);">📅 Live Mumbai Bookings</h4>
+            <span style="font-size:0.75rem; color:var(--text-muted);">Real-time across Bandra, Juhu, Colaba, Powai & Vashi</span>
+          </div>
+          <div id="adminBookingsList" style="overflow-x:auto; background:rgba(0,0,0,0.35); border-radius:var(--radius-md); border:var(--border-glass);">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Section 2: Turf-Specific Equipment Inventory Manager -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <h4 style="font-size:1.05rem; color:var(--text-primary);">🎒 Turf Equipment Stock & Price Manager</h4>
+              <p style="font-size:0.75rem; color:var(--text-muted);">Adjust available units or hourly rental rates for any Mumbai venue live</p>
+            </div>
+            <select id="adminEquipTurfSelect" class="text-input" style="padding:0.4rem 0.8rem; font-size:0.8rem; min-width:260px;">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div id="adminEquipmentTable" style="overflow-x:auto; background:rgba(0,0,0,0.35); border-radius:var(--radius-md); border:var(--border-glass);">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Section 3: Turf Venue Picture & Banner Uploader -->
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-md); padding:1.25rem;">
+          <h4 style="font-size:1.05rem; color:var(--accent-volt); margin-bottom:4px;">📸 Turf Venue Picture Uploader</h4>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:1rem;">Upload a new image file or paste an image URL for Cooperage Football Turf Park or any Mumbai arena.</p>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; align-items:flex-start;">
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+              <div class="form-field">
+                <label>Select Turf to Update</label>
+                <select id="adminPhotoTurfSelect" class="text-input" onchange="AuthEngine.loadCurrentTurfPhoto(this.value)">
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label>Upload Image File (From Computer / Phone)</label>
+                <input type="file" id="adminPhotoFileInput" accept="image/*" class="text-input" style="padding:0.4rem;" onchange="AuthEngine.handlePhotoFileSelect(event)">
+              </div>
+
+              <div class="form-field">
+                <label>Or Paste Online Image URL</label>
+                <input type="url" id="adminPhotoUrlInput" class="text-input" placeholder="https://example.com/stadium.jpg">
+              </div>
+
+              <button class="btn-primary" style="justify-content:center;" onclick="AuthEngine.saveTurfPhoto()">
+                💾 Save &amp; Update Turf Picture
+              </button>
+            </div>
+
+            <!-- Preview Box -->
+            <div style="text-align:center;">
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase;">Live Picture Preview</div>
+              <div style="width:100%; height:180px; border-radius:var(--radius-md); overflow:hidden; background:#07090E; border:1px solid rgba(204,255,0,0.3); display:flex; align-items:center; justify-content:center;">
+                <img id="adminPhotoPreview" src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1200&q=80" alt="Preview" style="width:100%; height:100%; object-fit:cover;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: 3D STADIUM TACTICAL PITCH BOARD -->
+  <div class="modal-backdrop" id="tacticalBoardModalBackdrop">
+    <div class="payment-modal" style="max-width:720px;">
+      <div class="modal-header">
+        <div>
+          <h3>⚽ 3D Tactical Lineup & Formation Board</h3>
+          <div style="font-size:0.75rem; color:var(--text-muted);" id="tacticalTurfLabel">St. Andrews AstroTurf Arena</div>
+        </div>
+        <button class="close-drawer-btn" onclick="UniqueFeatures.closeTacticalBoard()">✕</button>
+      </div>
+      <div style="padding:1.25rem; display:flex; flex-direction:column; gap:1rem; align-items:center;">
+        <div style="display:flex; gap:0.5rem;">
+          <button class="zone-pill tactical-pill active" data-formation="5v5" onclick="UniqueFeatures.renderTacticalPitch('5v5')">5v5 Futsal (1-2-1-1)</button>
+          <button class="zone-pill tactical-pill" data-formation="7v7" onclick="UniqueFeatures.renderTacticalPitch('7v7')">7v7 Football (1-2-3-1)</button>
+          <button class="zone-pill tactical-pill" data-formation="CRICKET" onclick="UniqueFeatures.renderTacticalPitch('CRICKET')">🏏 Box Cricket Positions</button>
+        </div>
+
+        <div style="width:100%; overflow-x:auto; text-align:center;">
+          <canvas id="tacticalPitchCanvas" style="border-radius:var(--radius-md); max-width:100%; box-shadow:0 10px 30px rgba(0,0,0,0.8); border:2px solid rgba(204,255,0,0.25);"></canvas>
+        </div>
+
+        <div style="font-size:0.78rem; color:var(--text-muted); text-align:center;">
+          ⚡ Neon circles represent your squad positioning on the pitch. Formations update in real time.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: MUMBAI WEATHER & MONSOON RADAR -->
+  <div class="modal-backdrop" id="monsoonRadarModalBackdrop">
+    <div class="payment-modal" style="max-width:620px;">
+      <div class="modal-header">
+        <div>
+          <h3>🌧️ Mumbai Live Weather & Monsoon Pitch Radar</h3>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Real-Time Microclimate Across Mumbai Turf Hubs</div>
+        </div>
+        <button class="close-drawer-btn" onclick="UniqueFeatures.closeWeatherRadar()">✕</button>
+      </div>
+      <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div class="stat-box" style="text-align:left; border-color:rgba(56,189,248,0.4);">
+            <div class="stat-num" style="color:#38BDF8;">29°C</div>
+            <div class="stat-label">Obsidian Night Temp • Clear</div>
+          </div>
+          <div class="stat-box" style="text-align:left; border-color:rgba(16,185,129,0.4);">
+            <div class="stat-num" style="color:var(--accent-emerald);">82%</div>
+            <div class="stat-label">Humidity • Floodlight Conditions</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-md); padding:1rem;">
+          <h4 style="font-size:0.92rem; color:var(--accent-volt); margin-bottom:8px;">☔ Monsoon Cover Recommendations</h4>
+          <ul style="font-size:0.8rem; color:var(--text-secondary); line-height:1.6; padding-left:1.2rem;">
+            <li><strong>Bandra, Juhu & Powai:</strong> 100% Roof Covered venues available. Play uninterrupted during rain.</li>
+            <li><strong>Colaba & Churchgate:</strong> Open-air sky broadcast quality. Best booked for clear night games.</li>
+            <li><strong>Footwear Advisory:</strong> AstroTurf rubber multi-studs required for wet pitch traction.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TURF X AI CHATBOT WIDGET -->
+  <button class="chatbot-trigger-btn" id="chatbotTriggerBtn" title="Ask Turf X Assistant">
+    <span style="font-size:1.6rem;">💬</span>
+    <span class="chatbot-pulse-dot"></span>
+  </button>
+
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="chatbot-avatar">⚡</div>
+        <div>
+          <div class="chatbot-title">Turf X Assistant</div>
+          <div class="chatbot-subtitle">
+            <span class="pulse-dot" style="width:6px; height:6px;"></span>
+            <span>Online • Mumbai Sports Concierge</span>
+          </div>
+        </div>
+      </div>
+      <button class="close-drawer-btn" id="closeChatbotBtn" style="width:28px; height:28px; font-size:0.9rem;">✕</button>
+    </div>
+
+    <!-- Scrollable Messages Body -->
+    <div class="chatbot-messages-body" id="chatbotMessagesBody">
+      <!-- Populated dynamically by chat.js -->
+    </div>
+
+    <!-- Quick Topic Questions Chips -->
+    <div class="chatbot-quick-questions">
+      <div class="quick-questions-label">
+        <span>⚡ Suggested Questions</span>
+        <span style="font-size:0.62rem; color:var(--accent-volt);">Tap to Ask</span>
+      </div>
+      <div class="quick-chips-row" id="chatbotQuickChips">
+        <!-- Populated dynamically by chat.js -->
+      </div>
+    </div>
+
+    <!-- Chat Input Bar -->
+    <div class="chatbot-input-bar">
+      <input type="text" id="chatTextInput" class="chat-text-input" placeholder="Ask about turfs, gear, slot times, split pay...">
+      <button class="chat-send-btn" id="chatSendBtn" title="Send Message">➔</button>
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- FRONTEND SCRIPTS (Order: Equipment, Payments, Auth, Chat, Features, App) -->
+  <script src="/js/equipment.js"></script>
+  <script src="/js/payments.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/features.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

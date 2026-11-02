@@ -1,0 +1,27 @@
+{
+  "name": "turf-x-mumbai",
+  "version": "1.0.0",
+  "description": "Hyper-local, ultra-premium sports turf and equipment booking platform for Mumbai",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed/mumbaiSeed.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "turf",
+    "mumbai",
+    "sports",
+    "equipment-booking",
+    "astro-turf",
+    "box-cricket",
+    "pickleball"
+  ],
+  "author": "Turf X Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
